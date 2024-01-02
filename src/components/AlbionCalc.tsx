@@ -1,7 +1,9 @@
 "use client";
 
+import { formatNumberDecimal } from "@/hooks/formatMoney";
 import { XCircle } from "lucide-react";
 import React, { useState } from "react";
+import { ResultsCalcItems } from "./ResultsCalcItems";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -10,7 +12,7 @@ import { useToast } from "./ui/use-toast";
 const AlbionCalc = () => {
   const { toast } = useToast();
   const [fields, setFields] = useState<any[]>([]);
-  const [resultsTotal, setResultsTotal] = useState<any>([]);
+  const [resultsTotal, setResultsTotal] = useState<any>();
 
   const handleAddField = () => {
     setFields([
@@ -47,45 +49,22 @@ const AlbionCalc = () => {
       return resultAll;
     });
 
-    const totalHasil = result
-      .reduce((acc: any, value: any) => acc + parseFloat(value), 0)
-      .toLocaleString("EN-en");
+    const totalHasil = result.reduce(
+      (acc: any, value: any) => acc + parseFloat(value),
+      0
+    );
+    setResultsTotal(totalHasil);
 
     toast({
-      description: totalHasil,
+      title: `Real Result Total : ${totalHasil.toLocaleString("EN-en")}`,
+      description: `
+        format to silver : ${formatNumberDecimal(totalHasil)}
+      `,
     });
   };
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      {/* <div className="grid w-full items-center gap-1.5">
-        <Label className="text-xl font-bold">Item 1</Label>
-        <div className="flex justify-between gap-5 items-end">
-          <div className="grid w-full items-center gap-1.5">
-            <Label htmlFor="item1">Name item</Label>
-            <Input
-              type="text"
-              id="item1"
-              placeholder="Add your item"
-              // value={field.name}
-              onChange={(e) => handleInputChange(0, "name", e.target.value)}
-            />
-          </div>
-          <div className="grid w-full items-center gap-1.5">
-            <Label htmlFor="item1">Avg.24h</Label>
-            <Input type="number" id="item1" placeholder="Add your item" />
-          </div>
-          <div className="grid w-full items-center gap-1.5">
-            <Label htmlFor="item1">Number of items</Label>
-            <Input type="number" id="item1" placeholder="Add your item" />
-          </div>
-          <div className="grid w-full items-center gap-1.5">
-            <Label htmlFor="item1">Percent</Label>
-            <Input type="number" id="item1" placeholder="%" className="w-20" />
-          </div>
-        </div>
-      </div> */}
-
       {fields.map((field: any, index: any) => (
         <div key={index} className="grid w-full items-center gap-1.5">
           <Label className="text-xl font-bold">Item {index + 1}</Label>
@@ -95,7 +74,6 @@ const AlbionCalc = () => {
               <Input
                 type="text"
                 placeholder="Add your item"
-                // value={field.name}
                 onChange={(e) =>
                   handleInputChange(index, "name", e.target.value)
                 }
@@ -143,9 +121,15 @@ const AlbionCalc = () => {
         </div>
       ))}
 
-      <Button onClick={() => handleAddField()}>Add Field</Button>
+      <Button onClick={handleAddField}>Add Field</Button>
 
-      <Button onClick={(e) => handleSubmit(e)}>Submit</Button>
+      <Button onClick={(e) => handleSubmit(e)} disabled={fields.length < 1}>
+        Submit
+      </Button>
+
+      <br />
+      <br />
+      <ResultsCalcItems data={fields} totalHasil={resultsTotal} />
     </div>
   );
 };

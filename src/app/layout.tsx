@@ -12,8 +12,8 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Quiz App",
-  description: "Quiz App build with NEXT.JS",
+  title: "Albion Calculator",
+  description: "Albion Calculator",
 };
 
 export default function RootLayout({
